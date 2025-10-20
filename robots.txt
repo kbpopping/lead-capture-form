@@ -1,0 +1,10 @@
+User-agent: *
+Disallow: /assets/
+Disallow: /vendor/
+Crawl-delay: 6 
+
+User-agent: Googlebot
+Disallow: /cache/
+
+# Direct bots to a non-existent or benign sitemap
+Sitemap: https://yourdomain.com/public/dummy_sitemap.xml

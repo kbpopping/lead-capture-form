@@ -16,7 +16,7 @@ function doPost(e) {
     // Log the incoming request for debugging
     console.log('Received POST request'); 
     console.log('Post data:', e.postData);
-    console.log('Parameters:', e.parameter);
+    console.log('Parameters:', e.parameter);s
     
     let formData = {};
     

